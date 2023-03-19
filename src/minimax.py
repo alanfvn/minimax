@@ -1,4 +1,4 @@
-from game import AGENT, PLAYER, find_winner, get_board
+from game import AGENT, PLAYER, find_winner
 from math import inf
 
 SCORES = {
@@ -7,20 +7,19 @@ SCORES = {
     'tie': (0, None)
 }
 
-def minimax(board, depth, is_maximizing_player):
+def minimax(board, depth, maximazing):
     """
     Minimax algorithm.
-    Returns a tuple (best_score, best_move). 
+    Returns a tuple with the best_score and the best_move). 
     """
-
-    # Check if the game is over or the maximum depth has been reached
+    # Check if the game is over 
     winner = find_winner(board)
 
     if winner is not None:
         return SCORES[winner]
 
-    # Recursive case
-    if is_maximizing_player:
+    if maximazing:
+        # Maximazing player
         best_score = -inf
         best_move = None
 
@@ -35,7 +34,8 @@ def minimax(board, depth, is_maximizing_player):
                         best_move = (i, j)
         return (best_score, best_move)
 
-    else: # Minimizing player
+    else: 
+        # Minimizing player
         best_score = inf
         best_move = None
 
@@ -48,33 +48,5 @@ def minimax(board, depth, is_maximizing_player):
                     if score < best_score:
                         best_score = score
                         best_move = (i, j)
+
         return (best_score, best_move)
-
-
-
-test_board = [
-    # 0: 0|1|2
-    # 1: 0|1|2
-    # 2: 0|1|2
-    [None, None, None],
-    [None, None, None],
-    [None, None, None],
-]
-
-
-turn = AGENT
-
-while find_winner(test_board) is None:
-    if turn == AGENT:
-        _,moves = minimax(test_board, 0, True)
-        x,y = moves
-        test_board[x][y] = AGENT 
-        print(f'Optimal value: {x},{y}')
-        turn = PLAYER
-    else:
-        x,y = input("Enter the move: ").split(',')
-        test_board[int(x)][int(y)] = PLAYER
-        turn = AGENT
-    print(get_board(test_board))
-
-print(f"the winner is: {find_winner(test_board)}")
