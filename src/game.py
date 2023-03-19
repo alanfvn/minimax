@@ -46,37 +46,29 @@ def check_tie(board):
     return True
 
 def find_winner(board):
-    # TODO: refactor this
-    def get_winner(list):
-        search = set(list)
-        return search.pop() if len(search) == 1 else None
 
-    # check cols
-    for i in range(3):
-        # get the columns of the array.
-        column = [col[i] for col in board]
-        srch = get_winner(column)
-        if srch is not None:
-            return srch
+    def get_winner(*win_states):
+        # We use a set to create a collection
+        # of non repeated elements, if the length of the 
+        # set equals to 1 that means all values are the same.
+        for state in win_states:
+            for sub_state in state:
+                search = set(sub_state)
+                has_none = None in search
+                if len(search) == 1 and not has_none:
+                    return search.pop()
+        return None
 
-    # check rows
-    for i in range(3):
-        srch = get_winner(board[i])
-        if srch is not None:
-            return srch
+    rows = board
+    cols = [[row[i] for row in board] for i in range(3)]
+    diagonals = [
+        # diagonal
+        [board[j][j] for j in range(3)], 
+        # inverted diagonal 
+        [board[j][-j-1] for j in range(3)] 
+    ]
 
-    # check diagonals
-    diag = [board[j][j] for j in range(3)]
-    inverted_diag = [board[j][-j-1] for j in range(3)]
-    srch0 = get_winner(diag)
-    srch1 = get_winner(inverted_diag)
-
-    if srch0 is not None:
-        return srch0
-
-    if srch1 is not None:
-        return srch1
-
-    # last check for ties 
+    winner = get_winner(rows, cols, diagonals)
     is_tie = check_tie(board)
-    return 'tie' if is_tie else None
+
+    return 'tie' if is_tie else winner

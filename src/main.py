@@ -5,7 +5,7 @@ from util import ask_question, clean, delay
 
 def main():
     clean()
-    start_first = ask_question("Deseas iniciar primero? [S/N]: ", ['S','N'])
+    start_first = ask_question("\nDeseas iniciar primero? [S/N]: ", ['S','N'])
     # set whos going first.
     turn = PLAYER if start_first == 'S' else AGENT
 
@@ -15,10 +15,10 @@ def main():
             i,j = moves
             turn = PLAYER
             GAME_BOARD[i][j] = AGENT 
-            print(f'[AI]: Movida optima encontrada: {i},{j}')
-            delay(1)
+            print(f'\n[AI]: Movida optima encontrada: [{i},{j}]')
+            delay(2)
         else:
-            move = ask_question("\nIngresa la posicion de tu movida [1,9]: ", [f'{x}' for x in range(1,10)])
+            move = ask_question("\nIngresa tu movida (1,9): ", [f'{x}' for x in range(1,10)])
             try:
                 attempt_human_move(int(move))
                 turn = AGENT
