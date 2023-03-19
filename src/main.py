@@ -6,5 +6,3 @@ GAME_BOARD = [
     [None, None, None],
     [None, None, None],
 ]
-
-AGENT, PLAYER = 'X', 'O'

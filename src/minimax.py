@@ -1,64 +1,80 @@
-from pickle import TRUE
-from game import AGENT, PLAYER, find_winner
+from game import AGENT, PLAYER, find_winner, get_board
+from math import inf
 
-# score to return based on the type of winner.
-score_ref = {
-    'X': 1,
-    'O': -1,
-    'tie': 0
+SCORES = {
+    AGENT: (1, None),
+    PLAYER: (-1, None),
+    'tie': (0, None)
 }
 
-def optimal_move(board):
-    bestScore = float('-inf')
-    # position on the board with the optimal move.
-    bestMove = (None,None)
+def minimax(board, depth, is_maximizing_player):
+    """
+    Minimax algorithm.
+    Returns a tuple (best_score, best_move). 
+    """
 
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] is not None:
-                continue
-
-
-def get_initial_score(maximizing):
-    if maximizing:
-        return float('-inf')
-    else:
-        return float('inf')
-
-def get_player(maximizing):
-    if maximizing:
-        return AGENT
-    else:
-        return PLAYER
-
-def calculate_score(cScore, bScore, maximizing):
-    if maximizing:
-        return max(cScore, bScore)
-    else:
-        return min(cScore, bScore)
-
-
-def minimax(board, depth, maximizing):
-    bestScore = get_initial_score(maximizing)
+    # Check if the game is over or the maximum depth has been reached
     winner = find_winner(board)
 
     if winner is not None:
-        return score[winner]
+        return SCORES[winner]
 
-    for i in range(3):
-        for j in range(3):
-            # avoid non empty spots.
-            if board[i][j] is not None:
-                continue
+    # Recursive case
+    if is_maximizing_player:
+        best_score = -inf
+        best_move = None
 
-            # place the next move.
-            board[i][j] = get_player(maximizing)
-            # compute the new score.
-            score = minimax(board, depth+1, not maximizing)
-            # store the best score.
-            bestScore = calculate_score(score, bestScore, maximizing)
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] is None:
+                    board[i][j] = AGENT
+                    score, _ = minimax(board, depth + 1, False)
+                    board[i][j] = None
+                    if score > best_score:
+                        best_score = score
+                        best_move = (i, j)
+        return (best_score, best_move)
 
-    # finally return the best score.
-    return bestScore
-    
-print(get_player(True))
+    else: # Minimizing player
+        best_score = inf
+        best_move = None
+
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] is None: 
+                    board[i][j] = PLAYER
+                    score, _ = minimax(board, depth + 1, True)
+                    board[i][j] = None
+                    if score < best_score:
+                        best_score = score
+                        best_move = (i, j)
+        return (best_score, best_move)
+
+
+
+test_board = [
+    # 0: 0|1|2
+    # 1: 0|1|2
+    # 2: 0|1|2
+    [None, None, None],
+    [None, None, None],
+    [None, None, None],
+]
+
+
+turn = AGENT
+
+while find_winner(test_board) is None:
+    if turn == AGENT:
+        _,moves = minimax(test_board, 0, True)
+        x,y = moves
+        test_board[x][y] = AGENT 
+        print(f'Optimal value: {x},{y}')
+        turn = PLAYER
+    else:
+        x,y = input("Enter the move: ").split(',')
+        test_board[int(x)][int(y)] = PLAYER
+        turn = AGENT
+    print(get_board(test_board))
+
+print(f"the winner is: {find_winner(test_board)}")

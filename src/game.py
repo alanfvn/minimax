@@ -1,8 +1,5 @@
 AGENT, PLAYER = 'X', 'O'
 
-def ai_move():
-    pass
-
 def get_board(board):
     board_rep = '\n'
     for i in range(3):
@@ -13,26 +10,28 @@ def get_board(board):
             board_rep += '\n-+-+-\n'
     return board_rep
 
-def find_winner(board):
-    def get_winner(arr):
-        # we use a set because it doesn't allow duplicates,
-        # so if theres only one element it means someone has won the game.
-        search = set(arr)
-        if len(search) == 1:
-            return search.pop()
-        return None
+def check_tie(board):
+    for row in board:
+        if None in row:
+            return False
+    return True
 
-    # check rows
-    for i in range(3):
-        srch = get_winner(board[i])
-        if srch is not None:
-            return srch
+def find_winner(board):
+    def get_winner(list):
+        search = set(list)
+        return search.pop() if len(search) == 1 else None
 
     # check cols
     for i in range(3):
         # get the columns of the array.
         column = [col[i] for col in board]
         srch = get_winner(column)
+        if srch is not None:
+            return srch
+
+    # check rows
+    for i in range(3):
+        srch = get_winner(board[i])
         if srch is not None:
             return srch
 
@@ -49,7 +48,5 @@ def find_winner(board):
         return srch1
 
     # last check for draw
-    all_pos = sum(board, [])
-    is_draw = not (None in all_pos)
-
-    return 'draw' if is_draw else None
+    is_draw = check_tie(board)
+    return 'tie' if is_draw else None
